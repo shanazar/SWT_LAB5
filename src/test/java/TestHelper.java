@@ -68,12 +68,8 @@ public class TestHelper {
         driver.findElement(By.linkText("Login")).click();
 
         driver.findElement(By.id("name")).sendKeys(username);
-
-        // ...
-
-        By loginButtonXpath = By.xpath("//input[@value='Login']");
-        // click on the button
-        // ...
+        driver.findElement(By.id("password")).sendKeys(password);
+        driver.findElement(By.xpath("//input[@value='Login']")).click();
     }
     List<WebElement> getEntries(){
         By by = By.className("entry");
