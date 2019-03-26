@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,7 @@ public class TestHelper {
     public void setUp() {
 
         // if you use Chrome:
-        System.setProperty("webdriver.chrome.driver", "/home/kristjan/Documents/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Kristjan\\Documents\\chromedriver.exe");
         driver = new ChromeDriver();
 
         // if you use Firefox:
@@ -132,6 +133,26 @@ public class TestHelper {
         return item.findElement(new By.ByClassName("item_price")).getText();
     }
 
+    HashMap<String, Double> getAllPrices() {
+        List<WebElement> elements = getEntries();
+        Double total = 0.0;
+        HashMap<String, Double> values = new HashMap<>();
+        for (WebElement element : elements) {
+            String name = getItemTitle(element);
+            String priceString = getItemPrice(element);
+            Double price = Double.parseDouble(priceString.substring(1));
+            values.put(name, price);
+            total += price;
+        }
+        values.put("Total", total);
+        return values;
+    }
+
+    Double getTotal() {
+        String totalString = driver.findElement(new By.ByXPath("//*[@id=\"check_out\"]/tbody/tr[5]/td[2]/strong")).getText();
+        return Double.parseDouble(totalString.substring(1));
+    }
+
     void increaseQuantity(Integer increaseAmount) throws InterruptedException {
         addItemToShoppingCart(getEntries().get(0));
         for (int i = 0; i < increaseAmount; i++) {
@@ -215,7 +236,7 @@ public class TestHelper {
         addressField.sendKeys(address);
         WebElement emailField = driver.findElement(By.id("order_email"));
         emailField.sendKeys(email);
-        Select paymentField = (Select) driver.findElement(By.id("order_pay_type"));
+        Select paymentField = new Select(driver.findElement(By.id("order_pay_type")));
         paymentField.selectByValue(payType);
     }
 

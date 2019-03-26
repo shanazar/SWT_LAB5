@@ -146,10 +146,37 @@ public class BasicTest extends TestHelper {
     }
 
     @Test
-    public void testCheckout() throws InterruptedException {
-        addItemsToShoppingCart(getEntries());
-        increaseQuantity(2);
-        clickCheckoutButton();
+    public void testCheckoutPricesWithSingleItems() throws InterruptedException {
+        List<WebElement> entries = getEntries();
+        HashMap<String, Double> prices = getAllPrices();
 
+        addItemsToShoppingCart(entries);
+        TimeUnit.SECONDS.sleep(1);
+        clickCheckoutButton();
+        TimeUnit.SECONDS.sleep(1);
+        fillDetailsForm("Peeter Meeter", "Peetri 1", "peeter.meeter@emeeter.ee", "Check");
+        TimeUnit.SECONDS.sleep(2);
+        clickPlaceOrderButton();
+        TimeUnit.SECONDS.sleep(1);
+        Double total = getTotal();
+        assertEquals(prices.get("Total"), total);
+    }
+
+    @Test
+    public void testCheckoutPricesWithMultipleItems() throws InterruptedException {
+        List<WebElement> entries = getEntries();
+        HashMap<String, Double> prices = getAllPrices();
+        addItemsToShoppingCart(entries);
+        increaseQuantity(2);
+
+        TimeUnit.SECONDS.sleep(1);
+        clickCheckoutButton();
+        TimeUnit.SECONDS.sleep(1);
+        fillDetailsForm("Peeter Meeter", "Peetri 1", "peeter.meeter@emeeter.ee", "Check");
+        TimeUnit.SECONDS.sleep(2);
+        clickPlaceOrderButton();
+        TimeUnit.SECONDS.sleep(1);
+        Double total = getTotal();
+        assertEquals(prices.get("Total"), total);
     }
 }
