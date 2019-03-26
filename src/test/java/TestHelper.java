@@ -52,6 +52,14 @@ public class TestHelper {
         new WebDriverWait(driver, waitForResposeTime).until(ExpectedConditions.presenceOfElementLocated(By.id(id)));
     }
 
+    void waitForElementByXpath(String xPath) {
+        new WebDriverWait(driver, waitForResposeTime).until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)));
+    }
+
+    void waitForElementByClass(String Class) {
+        new WebDriverWait(driver, waitForResposeTime).until(ExpectedConditions.presenceOfElementLocated(new By.ByClassName(Class)));
+    }
+
     public boolean isElementPresent(By by) {
         try {
             driver.findElement(by);
@@ -103,6 +111,7 @@ public class TestHelper {
     }
 
     List<WebElement> getCartEntries() {
+        waitForElementById("cart_row");
         return driver.findElements(By.className("cart_row"));
     }
 
@@ -151,6 +160,15 @@ public class TestHelper {
     Double getTotal() {
         String totalString = driver.findElement(new By.ByXPath("//*[@id=\"check_out\"]/tbody/tr[5]/td[2]/strong")).getText();
         return Double.parseDouble(totalString.substring(1));
+    }
+
+    ArrayList<String> getShoppingCartTitles() {
+        ArrayList<WebElement> cart = (ArrayList<WebElement>) getCartEntries();
+        ArrayList<String> returnable = new ArrayList<>();
+        for (WebElement element : cart) {
+            returnable.add(getShoppingCartItemTitle(element));
+        }
+        return returnable;
     }
 
     void increaseQuantity(Integer increaseAmount) throws InterruptedException {
@@ -229,7 +247,8 @@ public class TestHelper {
         driver.findElement(new By.ByXPath("//body//div[2]//div[1]//ul//li[4]//a")).click();
     }
 
-    void fillDetailsForm(String name, String address, String email, String payType) {
+    void fillDetailsForm(String name, String address, String email, String payType) throws InterruptedException {
+        TimeUnit.SECONDS.sleep(2);
         WebElement nameField = driver.findElement(By.id("order_name"));
         nameField.sendKeys(name);
         WebElement addressField = driver.findElement(By.id("order_address"));

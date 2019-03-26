@@ -32,7 +32,7 @@ public class BasicTest extends TestHelper {
 
     //Test if the items added to the shopping cart match in names and in order
     @Test
-    public void checkShoppingCartNamesMatchCatalogue() throws InterruptedException {
+    public void testShoppingCartNamesMatchCatalogue() throws InterruptedException {
         List<WebElement> entries = getEntries();
         addItemsToShoppingCart(entries);
         TimeUnit.SECONDS.sleep(2);
@@ -41,7 +41,6 @@ public class BasicTest extends TestHelper {
         for (int i = 0; i < cartEntries.size(); i++) {
             String cartEntry = getShoppingCartItemTitle(cartEntries.get(i));
             names.add(cartEntry);
-
         }
         for (int i = 0; i < entries.size(); i++) {
             String shopEntry = getItemTitle(entries.get(i));
@@ -51,20 +50,23 @@ public class BasicTest extends TestHelper {
     }
 
     @Test
-    public void checkShoppingCartPricesMatchCatalogue() throws InterruptedException {
+    public void testShoppingCartPrices() throws InterruptedException {
         List<WebElement> entries = getEntries();
         addItemsToShoppingCart(entries);
         TimeUnit.SECONDS.sleep(1);
-        List<WebElement> cartEntries = getCartEntries();
-        for (int i = 0; i < entries.size(); i++) {
-            String shopEntry = getItemPrice(entries.get(i));
-            String cartEntry = getShoppingCartItemPrice(cartEntries.get(i));
-            assertEquals("Prices from added items and shopping cart items were not identical.", shopEntry, cartEntry);
+        HashMap<String, Double> prices = getAllPrices();
+        ArrayList<WebElement> cartEntries = (ArrayList<WebElement>) getCartEntries();
+        for (WebElement element : cartEntries) {
+            Double expectedPrice = prices.get(getShoppingCartItemTitle(element));
+            Double realPrice = Double.parseDouble(getShoppingCartItemPrice(element).substring(1).trim());
+            assertEquals( expectedPrice, realPrice);
         }
+
+
     }
 
     @Test
-    public void checkShoppingCartIncreaseAndDecrease() throws InterruptedException {
+    public void testShoppingCartIncreaseAndDecrease() throws InterruptedException {
         Integer increaseAmount = 4;
         increaseQuantity(increaseAmount);
         increaseAmount++;
@@ -76,7 +78,7 @@ public class BasicTest extends TestHelper {
         realAmount = getShoppingCartAmount();
         assertEquals(originalAmount, realAmount);
     }
-
+    //Need testid oleks võinud paremini konstrueerida :c
     @Test
     public void deleteItemsOneByOne() throws InterruptedException {
         List<WebElement> entries = getEntries();
@@ -146,7 +148,7 @@ public class BasicTest extends TestHelper {
     }
 
     @Test
-    public void testCheckoutPricesWithSingleItems() throws InterruptedException {
+    public void testCheckoutPricesWithSingleQuantities() throws InterruptedException {
         List<WebElement> entries = getEntries();
         HashMap<String, Double> prices = getAllPrices();
 
@@ -167,6 +169,10 @@ public class BasicTest extends TestHelper {
         List<WebElement> entries = getEntries();
         HashMap<String, Double> prices = getAllPrices();
         addItemsToShoppingCart(entries);
+        TimeUnit.SECONDS.sleep(1);
+        String firstItem = getShoppingCartItemTitle(getCartEntries().get(0));
+        HashMap<String, Double> allPrices = getAllPrices();
+        System.out.println(firstItem);
         increaseQuantity(2);
 
         TimeUnit.SECONDS.sleep(1);
@@ -177,6 +183,6 @@ public class BasicTest extends TestHelper {
         clickPlaceOrderButton();
         TimeUnit.SECONDS.sleep(1);
         Double total = getTotal();
-        assertEquals(prices.get("Total"), total);
+        assertEquals(prices.get("Total") + allPrices.get(firstItem), total);
     }
 }
