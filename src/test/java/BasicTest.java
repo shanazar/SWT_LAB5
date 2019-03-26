@@ -48,7 +48,7 @@ public class BasicTest extends TestHelper {
                 assertEquals("Cart doesn't contain the item:", shopEntry, false);
         }
     }
-
+    //Test if the items' prices added to the shopping cart match the prices in the catalogue
     @Test
     public void testShoppingCartPrices() throws InterruptedException {
         List<WebElement> entries = getEntries();
@@ -59,12 +59,11 @@ public class BasicTest extends TestHelper {
         for (WebElement element : cartEntries) {
             Double expectedPrice = prices.get(getShoppingCartItemTitle(element));
             Double realPrice = Double.parseDouble(getShoppingCartItemPrice(element).substring(1).trim());
-            assertEquals( expectedPrice, realPrice);
+            assertEquals(expectedPrice, realPrice);
         }
-
-
     }
 
+    //Test if increasing and decreasing amounts in shopping cart works properly
     @Test
     public void testShoppingCartIncreaseAndDecrease() throws InterruptedException {
         Integer increaseAmount = 4;
@@ -78,7 +77,8 @@ public class BasicTest extends TestHelper {
         realAmount = getShoppingCartAmount();
         assertEquals(originalAmount, realAmount);
     }
-    //Need testid oleks võinud paremini konstrueerida :c
+
+    //Check if deleting the items by using delete button works
     @Test
     public void deleteItemsOneByOne() throws InterruptedException {
         List<WebElement> entries = getEntries();
@@ -90,7 +90,7 @@ public class BasicTest extends TestHelper {
         }
         assertEquals(0, getCartEntries().size());
     }
-
+    //Check if using the "Empty cart" button works
     @Test
     public void emptyCart() throws InterruptedException {
         List<WebElement> entries = getEntries();
@@ -101,6 +101,7 @@ public class BasicTest extends TestHelper {
         assertEquals(0, getCartEntries().size());
     }
 
+    //Check if items are under the caregories they are supposed to
     @Test
     public void categoryTesting() throws InterruptedException {
 
@@ -115,6 +116,7 @@ public class BasicTest extends TestHelper {
 
         switchToBooksTab();
         TimeUnit.SECONDS.sleep(1);
+
         ArrayList<String> booksTitles = hashMap.get("Books");
         realTitles = getTitles();
         Collections.reverse(realTitles);
@@ -123,17 +125,20 @@ public class BasicTest extends TestHelper {
 
         switchToOtherTab();
         TimeUnit.SECONDS.sleep(1);
+
         ArrayList<String> otherTitles = hashMap.get("Other");
         realTitles = getTitles();
         Collections.reverse(realTitles);
         assertEquals(otherTitles, realTitles);
     }
 
+    //Check if the search box works correctly
     @Test
     public void testSearching() throws InterruptedException {
         HashMap<String, String> titleSearches = titleSearches();
         ArrayList<String> titles = getTitles();
         WebElement searchBox = getSearchBox();
+
         for (String title : titles) {
 
             TimeUnit.SECONDS.sleep(1);
@@ -142,11 +147,11 @@ public class BasicTest extends TestHelper {
             TimeUnit.SECONDS.sleep(3);
 
             ArrayList<String> results = getTitles();
-            assertEquals("The results did not contain the nessecary result", true, results.contains(title));
+            assertEquals("The search results did not contain the nessecary object", true, results.contains(title));
             searchBox.clear();
         }
     }
-
+    //Check if buying singular items gives us the right price
     @Test
     public void testCheckoutPricesWithSingleQuantities() throws InterruptedException {
         List<WebElement> entries = getEntries();
@@ -164,6 +169,7 @@ public class BasicTest extends TestHelper {
         assertEquals(prices.get("Total"), total);
     }
 
+    //Check if buying items with greater quantity than 1 gives us the right price
     @Test
     public void testCheckoutPricesWithMultipleItems() throws InterruptedException {
         List<WebElement> entries = getEntries();
@@ -183,6 +189,7 @@ public class BasicTest extends TestHelper {
         clickPlaceOrderButton();
         TimeUnit.SECONDS.sleep(1);
         Double total = getTotal();
+
         assertEquals(prices.get("Total") + allPrices.get(firstItem), total);
     }
 }

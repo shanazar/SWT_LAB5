@@ -33,31 +33,9 @@ public class TestHelper {
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\Kristjan\\Documents\\chromedriver.exe");
         driver = new ChromeDriver();
 
-        // if you use Firefox:
-        //System.setProperty("webdriver.geckoins:maven-compiler-plugin:3.1:testCompile (default-testCompile) on project WebApplicationTestAutomation: Compilation failure: Compilation failure:
-        //driver = new FirefoxDriver();
-
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.get(baseUrl);
 
-    }
-
-    void goToPage(String page) {
-        WebElement elem = driver.findElement(By.linkText(page));
-        elem.click();
-        waitForElementById(page);
-    }
-
-    void waitForElementById(String id) {
-        new WebDriverWait(driver, waitForResposeTime).until(ExpectedConditions.presenceOfElementLocated(By.id(id)));
-    }
-
-    void waitForElementByXpath(String xPath) {
-        new WebDriverWait(driver, waitForResposeTime).until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)));
-    }
-
-    void waitForElementByClass(String Class) {
-        new WebDriverWait(driver, waitForResposeTime).until(ExpectedConditions.presenceOfElementLocated(new By.ByClassName(Class)));
     }
 
     public boolean isElementPresent(By by) {
@@ -111,7 +89,6 @@ public class TestHelper {
     }
 
     List<WebElement> getCartEntries() {
-        waitForElementById("cart_row");
         return driver.findElements(By.className("cart_row"));
     }
 
@@ -160,15 +137,6 @@ public class TestHelper {
     Double getTotal() {
         String totalString = driver.findElement(new By.ByXPath("//*[@id=\"check_out\"]/tbody/tr[5]/td[2]/strong")).getText();
         return Double.parseDouble(totalString.substring(1));
-    }
-
-    ArrayList<String> getShoppingCartTitles() {
-        ArrayList<WebElement> cart = (ArrayList<WebElement>) getCartEntries();
-        ArrayList<String> returnable = new ArrayList<>();
-        for (WebElement element : cart) {
-            returnable.add(getShoppingCartItemTitle(element));
-        }
-        return returnable;
     }
 
     void increaseQuantity(Integer increaseAmount) throws InterruptedException {
@@ -261,13 +229,6 @@ public class TestHelper {
 
     void clickPlaceOrderButton() {
         driver.findElement(new By.ByXPath("//*[@id=\"place_order\"]/input")).click();
-    }
-
-    void logout() {
-        WebElement logout = driver.findElement(By.linkText("Logout"));
-        logout.click();
-
-        waitForElementById("Admin");
     }
 
     @After
